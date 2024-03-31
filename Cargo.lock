@@ -1393,6 +1393,7 @@ dependencies = [
  "altc",
  "gloo 0.11.0",
  "js-sys",
+ "quick-xml",
  "wasm-bindgen-futures",
  "web-sys",
  "yew",

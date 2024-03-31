@@ -20,7 +20,7 @@ pub struct Props {
     pub onedit: Callback<String>,
 }
 
-#[function_component(File)]
+#[function_component(AskCard)]
 pub fn file(props: &Props) -> Html {
     let active = use_state(|| false);
     let onedit = props.onedit.clone();

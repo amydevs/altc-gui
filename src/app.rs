@@ -1,6 +1,6 @@
-use std::io::Cursor;
+use std::{borrow::BorrowMut, io::{Cursor, Seek}};
 
-use crate::components::filelist::file::File;
+use crate::components::ask::{Ask, AskCard};
 
 use gloo::{dialogs::alert, *};
 use yew::prelude::*;
@@ -8,24 +8,27 @@ use altc::util;
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let files: UseStateHandle<Vec<crate::components::filelist::file::Ask>> =
+    let asks: UseStateHandle<Vec<crate::components::ask::Ask>> =
         use_state(std::vec::Vec::new);
 
-    let converted_files = files.iter().map(|fileinfo| {
+    let converted_ask_results = asks.iter().map(|fileinfo| {
         let live_version = fileinfo.version;
         let to_version = fileinfo.to_version.unwrap();
         let cursor = Cursor::new(fileinfo.contents.as_bytes());
-        let reader = std::io::BufReader::new(cursor);
-        let parsed = util::parse_ask_from_reader(reader, live_version).unwrap();
+        let mut reader = std::io::BufReader::new(cursor);
+        let parsed = match util::parse_ask_from_reader(reader.borrow_mut(), live_version) {
+            Ok(parsed) => parsed,
+            Err(err) => return Err((err, reader.stream_position().unwrap())),
+        };
         let converted = util::convert(parsed, to_version);
-        let mut new_fileinfo = fileinfo.clone();
-        new_fileinfo.contents = util::generate_ask(&converted).unwrap();
-        new_fileinfo.version = to_version;
-        new_fileinfo
+        let mut new_ask = fileinfo.clone();
+        new_ask.contents = util::generate_ask(&converted).unwrap();
+        new_ask.version = to_version;
+        Ok::<Ask, (quick_xml::DeError, u64)>(new_ask)
     }).collect::<Vec<_>>();
 
     let process_files = {
-        let files = files.clone();
+        let files = asks.clone();
         Callback::from(move |event: web_sys::DragEvent| {
             event.prevent_default();
             let files = files.clone();
@@ -46,7 +49,7 @@ pub fn app() -> Html {
                         let file_text = file_text_js_value.as_string().unwrap();
                         let mut new_files = (*files).clone();
                         if let Some(live_version) = util::get_live_version(&file_text) {
-                            new_files.push(crate::components::filelist::file::Ask {
+                            new_files.push(Ask {
                                 name: uploaded_file.name(),
                                 contents: file_text,
                                 version: live_version,
@@ -68,12 +71,12 @@ pub fn app() -> Html {
         <main>
             <div class="p-6">
                 {
-                    files.iter().enumerate().map(|(i, fileinfo)| {
+                    asks.iter().enumerate().map(|(i, ask)| {
                         html! {
-                            <File
-                                ask={fileinfo.clone()}
+                            <AskCard
+                                ask={ask.clone()}
                                 onedit={
-                                    let files = files.clone();
+                                    let files = asks.clone();
                                     {
                                         Callback::from(move |value| {
                                             let mut new_files = (*files).clone();
@@ -89,13 +92,18 @@ pub fn app() -> Html {
             </div>
             <div class="p-6">
                 {
-                    converted_files.iter().map(|fileinfo| {
-                        html! {
-                            <File
-                                ask={fileinfo.clone()}
-                            />
+                    converted_ask_results.iter().map(|ask_result| {
+                        if let Ok(ask) = ask_result {
+                            html! {
+                                <AskCard
+                                   ask={ask.clone()}
+                                />
+                            }
                         }
-                    }).collect::<Vec<_>>()
+                        else {
+                            html!()
+                        }
+                   }).collect::<Vec<_>>()
                 }
             </div>
             <div
