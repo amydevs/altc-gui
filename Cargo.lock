@@ -1394,6 +1394,7 @@ dependencies = [
  "gloo 0.11.0",
  "js-sys",
  "quick-xml",
+ "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
  "yew",

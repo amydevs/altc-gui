@@ -3,7 +3,7 @@ module.exports = {
     content: {
       files: ["src/**/*.rs", "index.html"],
     },
-    darkMode: "class", // 'media' or 'class'
+    darkMode: "media", // 'media' or 'class'
     theme: {
       container: {
         center: true,

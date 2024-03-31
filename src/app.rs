@@ -16,7 +16,6 @@ pub struct DeErrorWrapper {
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let dark_mode = use_state(|| false);
     let default_version_to = use_state(|| LiveVersion::Live12);
     let asks: UseStateHandle<Vec<crate::components::ask::Ask>> =
         use_state(std::vec::Vec::new);
@@ -80,7 +79,7 @@ pub fn app() -> Html {
     };
 
     html! {
-        <main class={classes!("h-screen", "bg-background", if *dark_mode { "dark" } else { "" })}>
+        <main class="h-screen bg-background">
             <div class="p-6 pb-0 flex min-h-[33.333%]">
                 <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6 space-y-1">
                     <div>
@@ -103,16 +102,7 @@ pub fn app() -> Html {
                             })
                         }}>
                             <LiveVersionSelectOptions />
-                        </select>
-                        <br />
-                        <button class="border p-1" onclick={{
-                            let dark_mode = dark_mode.clone();
-                            Callback::from(move |_| {
-                                dark_mode.set(!*dark_mode);
-                            })
-                        }}>
-                            { "Toggle dark mode" }
-                        </button>                   
+                        </select>                 
                     </div>
                 </div>
             </div>
@@ -140,14 +130,22 @@ pub fn app() -> Html {
                                     <AskCard
                                         ask={ask.clone()}
                                         onedit={
-                                            let files = asks.clone();
+                                            let asks = asks.clone();
                                             {
                                                 Callback::from(move |value| {
-                                                    let mut new_files = (*files).clone();
-                                                    new_files[i] = value;
-                                                    files.set(new_files);
+                                                    let mut new_asks = (*asks).clone();
+                                                    new_asks[i] = value;
+                                                    asks.set(new_asks);
                                                 })
                                             }
+                                        }
+                                        ondelete={
+                                            let asks = asks.clone();
+                                            Callback::from(move |_| {
+                                                let mut new_asks = (*asks).clone();
+                                                new_asks.remove(i);
+                                                asks.set(new_asks);
+                                            })
                                         }
                                     />
                                 }
