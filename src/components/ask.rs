@@ -17,13 +17,14 @@ pub struct Props {
     pub classes: Classes,
     pub ask: Ask,
     #[prop_or_default]
-    pub onedit: Callback<String>,
+    pub onedit: Callback<Ask>,
 }
 
 #[function_component(AskCard)]
 pub fn file(props: &Props) -> Html {
     let active = use_state(|| false);
     let onedit = props.onedit.clone();
+    let ask = props.ask.clone();
     html! {
         <div class={ classes!("rounded-lg", "border", "bg-card", "text-card-foreground", "shadow-sm", props.classes.clone()) }>
             // Heading
@@ -45,7 +46,9 @@ pub fn file(props: &Props) -> Html {
                     value={ props.ask.contents.clone() }
                     oninput={Callback::from(move |event: InputEvent| {
                         let area: HtmlTextAreaElement = event.target().unwrap().dyn_into().unwrap();
-                        onedit.emit(area.value());
+                        let mut new_ask = ask.clone();
+                        new_ask.contents = area.value();
+                        onedit.emit(new_ask);
                     })}
                 />
             </div>

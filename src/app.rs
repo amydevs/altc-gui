@@ -2,7 +2,6 @@ use std::{borrow::BorrowMut, io::{Cursor, Seek}};
 
 use crate::components::ask::{Ask, AskCard};
 
-use gloo::{dialogs::alert, *};
 use yew::prelude::*;
 use altc::util;
 
@@ -48,19 +47,13 @@ pub fn app() -> Html {
                             .unwrap();
                         let file_text = file_text_js_value.as_string().unwrap();
                         let mut new_files = (*files).clone();
-                        if let Some(live_version) = util::get_live_version(&file_text) {
-                            new_files.push(Ask {
-                                name: uploaded_file.name(),
-                                contents: file_text,
-                                version: live_version,
-                                to_version: Some(util::LiveVersion::Live12)
-                            });
-                            files.set(new_files);
-                        }
-                        else {
-                            alert(&format!("Could not detect Live version of \"{}\"", uploaded_file.name()))
-                        }
-                        
+                        new_files.push(Ask {
+                            name: uploaded_file.name(),
+                            version: util::get_live_version(&file_text).unwrap_or(util::LiveVersion::Live12),
+                            contents: file_text,
+                            to_version: Some(util::LiveVersion::Live12)
+                        });
+                        files.set(new_files);
                     }
                 }
             });
@@ -80,7 +73,7 @@ pub fn app() -> Html {
                                     {
                                         Callback::from(move |value| {
                                             let mut new_files = (*files).clone();
-                                            new_files[i].contents = value;
+                                            new_files[i] = value;
                                             files.set(new_files);
                                         })
                                     }
