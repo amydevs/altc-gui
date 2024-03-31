@@ -1,9 +1,7 @@
-use std::mem::transmute;
-
 use altc::util::LiveVersion;
 use gloo::*;
 use js_sys::wasm_bindgen::JsCast;
-use web_sys::{HtmlSelectElement, HtmlInputElement, HtmlTextAreaElement};
+use web_sys::{HtmlSelectElement, HtmlTextAreaElement};
 use yew::prelude::*;
 
 use crate::components::live_version_select_options::LiveVersionSelectOptions;
@@ -50,7 +48,7 @@ pub fn file(props: &Props) -> Html {
                         html! {
                             <>
                                 { "Convert from " }
-                                <select class="p-1" onchange={{
+                                <select class="p-1 bg-background border" onchange={{
                                     let onedit = props.onedit.clone();
                                     let ask = props.ask.clone();
                                     Callback::from(move |event: Event| {
@@ -64,7 +62,7 @@ pub fn file(props: &Props) -> Html {
                                     <LiveVersionSelectOptions value={props.ask.version} />
                                 </select>
                                 { " to " }
-                                <select class="p-1" onchange={{
+                                <select class="p-1 bg-background border" onchange={{
                                     let onedit = props.onedit.clone();
                                     let ask = props.ask.clone();
                                     Callback::from(move |event: Event| {
@@ -88,10 +86,12 @@ pub fn file(props: &Props) -> Html {
                     
                 }
                 // Popout
-                <div class={ classes!(if *active { "" } else { "hidden" }) }>
+                <div class={ classes!(if *active { "" } else { "hidden" }, "pt-3") }>
+                    <span>{ "Contents:" }</span>
                     <textarea
-                        class="resize-y w-full h-64"
-                        value={ props.ask.contents.clone() }
+                        class="resize-y w-full h-64 rounded-lg border bg-card text-card-foreground shadow-sm"
+                        value={props.ask.contents.clone()}
+                        disabled={props.ask.to_version.is_none()}
                         oninput={{
                             let onedit = props.onedit.clone();
                             let ask = props.ask.clone();
@@ -105,7 +105,6 @@ pub fn file(props: &Props) -> Html {
                     />
                 </div>
             </div>
-            
         </div>
     }
 }
