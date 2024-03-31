@@ -8,7 +8,6 @@ pub struct Props {
     pub children: Html,
 }
 
-
 #[function_component(App)]
 pub fn filelist(props: &Props) -> Html {
     html! {
