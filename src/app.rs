@@ -1,49 +1,51 @@
 use yew::prelude::*;
 use gloo::console::log;
-use std::sync::atomic::{AtomicU16, Ordering};
-use std::{collections::HashMap, rc::Rc};
+use crate::components::filelist::file::File;
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let filereaders = use_state(|| HashMap::<u16, Rc<gloo::file::callbacks::FileReader>>::new());
-    let filereader_ids = use_state(|| AtomicU16::new(0));
-
+    let files: UseStateHandle<Vec<crate::components::filelist::file::FileInfo>> = use_state(|| vec![]);
+    
     let process_files = {
-        let filereaders = filereaders.clone();
-        let filereader_ids = filereader_ids.clone();
+        let files = files.clone();
         Callback::from(move |event: web_sys::DragEvent| {
             event.prevent_default();
-            let filereaders_for_remove = filereaders.clone();
-            let files = event.data_transfer().unwrap().files();
-            if let Some(filelist) = files {
-                let files = js_sys::try_iter(&filelist)
-                .unwrap()
-                .unwrap()
-                .map(|v| web_sys::File::from(v.unwrap()))
-                .map(web_sys::File::from);
-                let mut new_readers = (*filereaders).clone();
-                for file in files {
-                    let filereader_id = filereader_ids.fetch_add(1, Ordering::SeqCst);
-                    // let filereaders_for_remove = filereaders_for_remove.clone();
-                    let filereader = gloo::file::callbacks::read_as_text(&file.into(), move |result| {
-                        log!(result.unwrap());
-                        log!(filereader_id);
-                        let mut new_filereaders_for_remove = filereaders_for_remove.clone();
-                        new_filereaders_for_remove.remove(&filereader_id);
-                        // filereaders_for_remove.set(new_filereaders_for_remove);
-                    });
-                    new_readers.insert(filereader_id, Rc::new(filereader));
+            let files = files.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let files = files.clone();
+                let uploaded_files = event.data_transfer().unwrap().files();
+                if let Some(filelist) = uploaded_files {
+                    let uploaded_files = js_sys::try_iter(&filelist)
+                    .unwrap()
+                    .unwrap()
+                    .map(|v| web_sys::File::from(v.unwrap()))
+                    .map(web_sys::File::from);
+                    for uploaded_file in uploaded_files {
+                        let file_promise: js_sys::Promise = uploaded_file.text();
+                        let file_text_js_value = wasm_bindgen_futures::JsFuture::from(file_promise).await.unwrap();
+                        let mut new_files = (*files).clone();
+                        new_files.push(crate::components::filelist::file::FileInfo {
+                            name: uploaded_file.name(),
+                            contents: file_text_js_value.as_string().unwrap()
+                        });
+                        
+                        files.set(new_files);
+                    }
                 }
-                filereaders.set(new_readers);
-            }
+            });
+
         })
     };
 
     html! {
         <main>
-            <img class="logo" src="https://yew.rs/img/logo.png" alt="Yew logo" />
-            <h1>{ "Hello World!" }</h1>
-            <span class="subtitle">{ "from Yew with " }<i class="heart" /></span>
+            {
+                files.iter().enumerate().map(|(i, fileinfo)| {
+                    html! {
+                        <File file={fileinfo.clone()} />
+                    }
+                }).collect::<Vec<_>>()
+            }
             <div
                 class="w-full h-96 border"
                 ondrop={process_files}
