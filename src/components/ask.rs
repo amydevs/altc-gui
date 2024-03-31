@@ -43,6 +43,7 @@ pub fn file(props: &Props) -> Html {
                                         class="hidden"
                                     />
                                     <button
+                                        title="Download"
                                         onclick={{
                                             let ask = props.ask.clone();
                                             Callback::from(move |_| {
@@ -53,7 +54,6 @@ pub fn file(props: &Props) -> Html {
                                                 let anchor = downloader_ref.cast::<HtmlAnchorElement>().unwrap();
                                                 anchor.set_download(&ask.name);
                                                 anchor.set_href(&url);
-                                                let anchor = downloader_ref.cast::<HtmlAnchorElement>().unwrap();
                                                 anchor.click();
                                                 web_sys::Url::revoke_object_url(&url).unwrap();
                                             })
@@ -73,6 +73,7 @@ pub fn file(props: &Props) -> Html {
                         if let Some(ondelete) = &props.ondelete {
                             html! {
                                 <button
+                                    title="Delete"
                                     onclick={{
                                         let ondelete = ondelete.clone();
                                         Callback::from(move |_| {
@@ -90,6 +91,7 @@ pub fn file(props: &Props) -> Html {
                         }
                     }
                     <button
+                        title="Expand"
                         onclick={{
                             let active = active.clone();
                             Callback::from(move |_| {
