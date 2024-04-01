@@ -102,8 +102,9 @@ pub fn app() -> Html {
                     <div>
                         <h2 class="font-bold">{ "Links" }</h2>
                         <ul class="list-disc pl-3">
-                            <li><a class="underline" href="https://github.com/amydevs/altc-gui">{ "Source Code" }</a></li>
-                            <li><a class="underline" href="https://github.com/amydevs/AbletonLiveThemeConverter">{ "CLI Source Code" }</a></li>
+                            <li><a class="underline" href="https://github.com/amydevs/altc-gui">{ "Source code" }</a></li>
+                            <li><a class="underline" href="https://github.com/amydevs/AbletonLiveThemeConverter">{ "CLI source code" }</a></li>
+                            <li><a class="underline" href="buymeacoffee.com/amydev">{ "Buy me a cofee" }</a></li>
                         </ul>
                     </div>
                     <div>
