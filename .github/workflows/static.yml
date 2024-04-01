@@ -46,18 +46,18 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-            trunk/
-            wasm-bindgen-cli/
           key: web-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Set up cargo install cache
         uses: actions/cache@v4
         with:
-          path: ${{ env.CARGO_INSTALLS }}
-          key: web-cargo-${{ env.CARGO_INSTALLS }}
+          path: installs
+          key: |
+            web-cargo-installs
+            ${{ env.CARGO_INSTALLS }}
       - name: Install cargo dependencies
         run: |
           while IFS= read -r line; do
-            cargo install "$line" --target-dir "$line" || true
+            cargo install "$line" --target-dir "installs/$line" || true
           done <<< "$CARGO_INSTALLS"
       - name: Install wasm32-unknown-unknown Toolchain
         run: rustup target add wasm32-unknown-unknown
