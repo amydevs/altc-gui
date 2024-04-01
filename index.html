@@ -11,7 +11,10 @@
     <title>AltC GUI</title>
     <link data-trunk rel="tailwind-css" href="src/tailwind.css"/>
     <link data-trunk rel="copy-dir" href="assets">
+    <base data-trunk-public-url />
   </head>
-  <base data-trunk-public-url />
+  <body>
+    <link data-trunk rel="rust" href="Cargo.toml" data-wasm-opt="z" />
+  </body>
 </html>
 
