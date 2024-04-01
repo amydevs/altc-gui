@@ -91,14 +91,19 @@ pub fn app() -> Html {
                             { "Ableton Live Theme Converter GUI" }
                         </h1>
                         <p>
-                            { "AltC is a CLI/web tool built in Rust that converts any Live >= 10 theme to be compatible with any other Live version >= 10. It does this by updating the schema of the XML files, as well as translating between RGBA values to hex color values." }
+                            { "AltC is a CLI/web tool built in Rust that converts any Live >= 10 theme to be compatible with any other Live version >= 10." }
+                        </p>
+                        <p>
+                            { "Please send me emails at " }
+                            <a class="underline" href="mailto:ayanamydev@gmail.com">{ "ayanamydev@gmail.com" }</a>
+                            { " if you have any problems or suggestions for improvements (screenshots would be appreciated)." }
                         </p>
                     </div>
                     <div>
                         <h2 class="font-bold">{ "Links" }</h2>
                         <ul class="list-disc pl-3">
-                            <li><a href="https://github.com/amydevs/altc-gui">{ "Source Code" }</a></li>
-                            <li><a href="https://github.com/amydevs/AbletonLiveThemeConverter">{ "CLI Source Code" }</a></li>
+                            <li><a class="underline" href="https://github.com/amydevs/altc-gui">{ "Source Code" }</a></li>
+                            <li><a class="underline" href="https://github.com/amydevs/AbletonLiveThemeConverter">{ "CLI Source Code" }</a></li>
                         </ul>
                     </div>
                     <div>
