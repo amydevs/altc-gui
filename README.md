@@ -1,5 +1,8 @@
 # Ableton Live Theme Converter GUI (altc-gui)
 
+<a href="https://www.buymeacoffee.com/amydev" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 108px !important;" ></a>
+[![Deploy static content to Pages](https://github.com/amydevs/altc-gui/actions/workflows/static.yml/badge.svg)](https://github.com/amydevs/altc-gui/actions/workflows/static.yml)
+
 Convert Ableton Live 10, 11, and 12 themes with a convenient web GUI.
 
 ## Usage
