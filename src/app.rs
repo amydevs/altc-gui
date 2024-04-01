@@ -11,7 +11,7 @@ use altc::util::{self, LiveVersion};
 pub struct DeErrorWrapper {
     pub name: String,
     pub cause: quick_xml::DeError,
-    pub position: u64,
+    pub line_number: u64,
 }
 
 #[function_component(App)]
@@ -26,13 +26,20 @@ pub fn app() -> Html {
         let to_version = fileinfo.to_version.unwrap();
         let cursor = Cursor::new(fileinfo.contents.as_bytes());
         let mut reader = std::io::BufReader::new(cursor);
+        
         let parsed = match util::parse_ask_from_reader(reader.borrow_mut(), live_version) {
             Ok(parsed) => parsed,
-            Err(err) => return Err(DeErrorWrapper {
-                name: fileinfo.name.clone(),
-                cause: err,
-                position: reader.stream_position().unwrap()
-            }),
+            Err(err) => {
+                let line_number = fileinfo.contents[..reader.stream_position().unwrap() as usize]
+                    .chars()
+                    .filter(|x| *x == '\n')
+                    .count();
+                return Err(DeErrorWrapper {
+                    name: fileinfo.name.clone(),
+                    cause: err,
+                    line_number: line_number as u64,
+                })
+            },
         };
         let converted = util::convert(parsed, to_version);
         let mut new_ask = fileinfo.clone();
@@ -216,11 +223,16 @@ pub fn app() -> Html {
                                     },
                                     Err(err) => {
                                         html!(
-                                            <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-3 flex items-center justify-between">
-                                                <div>
-                                                    { err.name.clone() }
+                                            <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+                                                <div class="p-3 flex items-center justify-between border-b">
+                                                    <div>
+                                                        { err.name.clone() }
+                                                    </div>
+                                                    <div>
+                                                        { format!("Error on line {}", err.line_number) }
+                                                    </div>
                                                 </div>
-                                                <div>
+                                                <div class="p-3">
                                                     { err.cause.clone() }
                                                 </div>
                                             </div>
