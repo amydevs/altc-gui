@@ -24,6 +24,10 @@ concurrency:
 jobs:
   # Single deploy job since we're just deploying
   deploy:
+    env:
+      CARGO_INSTALLS: |
+        trunk
+        wasm-bindgen-cli
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -45,10 +49,16 @@ jobs:
             trunk/
             wasm-bindgen-cli/
           key: web-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Install trunk
-        run: "[ -d trunk ] || cargo install trunk --target-dir trunk"
-      - name: Install wasm-bindgen
-        run: "[ -d wasm-bindgen-cli ] || cargo install wasm-bindgen-cli --target-dir wasm-bindgen-cli"
+      - name: Set up cargo install cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CARGO_INSTALLS }}
+          key: web-cargo-${{ env.CARGO_INSTALLS }}
+      - name: Install cargo dependencies
+        run: |
+          while IFS= read -r line; do
+            cargo install "$line" --target-dir "$line" || true
+          done <<< "$CARGO_INSTALLS"
       - name: Install wasm32-unknown-unknown Toolchain
         run: rustup target add wasm32-unknown-unknown
       - name: Build
