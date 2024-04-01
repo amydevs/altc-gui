@@ -120,7 +120,7 @@ pub fn app() -> Html {
             <div class="flex sm:flex-row flex-col p-6 gap-6 h-2/3">
                 <div class="flex flex-col rounded-lg border bg-card text-card-foreground shadow-sm flex-1">
                     <div class="border-b p-6 flex justify-between">
-                        { "Drag .ask files here" }
+                        { "Drag .ask files below here" }
                         <input
                             id="uploader"
                             type="file"
