@@ -56,8 +56,10 @@ jobs:
             ${{ env.CARGO_INSTALLS }}
       - name: Install cargo dependencies
         run: |
-          while IFS= read -r line; do
-            cargo install "$line" --target-dir "installs/$line" || true
+          while IFS= read -r package; do
+            if [ "$package" != "" ]; then 
+              cargo install "$package" --target-dir "installs/$package" || true
+            fi;
           done <<< "$CARGO_INSTALLS"
       - name: Install wasm32-unknown-unknown Toolchain
         run: rustup target add wasm32-unknown-unknown
