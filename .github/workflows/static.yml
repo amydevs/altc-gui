@@ -43,9 +43,12 @@ jobs:
             ~/.cargo/git/db/
             target/
             trunk/
+            wasm-bindgen-cli/
           key: web-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install trunk
         run: "[ -d trunk ] || cargo install trunk --target-dir trunk"
+      - name: Install wasm-bindgen
+        run: "[ -d wasm-bindgen-cli ] || cargo install wasm-bindgen-cli --target-dir wasm-bindgen-cli"
       - name: Install wasm32-unknown-unknown Toolchain
         run: rustup target add wasm32-unknown-unknown
       - name: Build
