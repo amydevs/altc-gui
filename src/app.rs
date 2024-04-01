@@ -85,7 +85,7 @@ pub fn app() -> Html {
     html! {
         <main class="h-screen bg-background">
             <div class="p-6 pb-0 flex min-h-[33.333%]">
-                <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6 space-y-3">
+                <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6 space-y-3 flex-1">
                     <div>
                         <h1 class="font-bold">
                             { "Ableton Live Theme Converter GUI" }
