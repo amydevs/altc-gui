@@ -48,15 +48,15 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: web-cargo-${{ hashFiles('**/Cargo.lock') }}
-          save-always: true
+          restore-keys: web-cargo-
       - name: Set up cargo install cache
         uses: actions/cache@v4
         with:
           path: installs
           key: |
-            web-cargo-installs
+            web-installs
             ${{ env.CARGO_INSTALLS }}
-          save-always: true
+          restore-keys: web-installs
       - name: Install cargo dependencies
         run: |
           while IFS= read -r package; do
