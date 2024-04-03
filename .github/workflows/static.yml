@@ -27,8 +27,6 @@ jobs:
     env:
       CARGO_INSTALLS: |
         trunk
-        wasm-bindgen-cli
-        wasm-opt
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
