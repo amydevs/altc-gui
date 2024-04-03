@@ -11,7 +11,7 @@ use altc::util::{self, LiveVersion};
 pub struct DeErrorWrapper {
     pub name: String,
     pub cause: quick_xml::DeError,
-    pub line_number: u64,
+    pub line_number: usize,
 }
 
 #[function_component(App)]
@@ -30,14 +30,14 @@ pub fn app() -> Html {
         let parsed = match util::parse_ask_from_reader(reader.borrow_mut(), live_version) {
             Ok(parsed) => parsed,
             Err(err) => {
-                let line_number = fileinfo.contents[..reader.stream_position().unwrap() as usize]
+                let line_number = 1 + fileinfo.contents[..reader.stream_position().unwrap() as usize]
                     .chars()
                     .filter(|x| *x == '\n')
                     .count();
                 return Err(DeErrorWrapper {
                     name: fileinfo.name.clone(),
                     cause: err,
-                    line_number: line_number as u64,
+                    line_number: line_number,
                 })
             },
         };
