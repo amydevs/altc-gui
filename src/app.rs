@@ -104,7 +104,7 @@ pub fn app() -> Html {
                         <ul class="list-disc pl-3">
                             <li><a class="underline" href="https://github.com/amydevs/altc-gui">{ "Source code" }</a></li>
                             <li><a class="underline" href="https://github.com/amydevs/AbletonLiveThemeConverter">{ "CLI source code" }</a></li>
-                            <li><a class="underline" href="buymeacoffee.com/amydev">{ "Buy me a cofee" }</a></li>
+                            <li><a class="underline" href="https://buymeacoffee.com/amydev">{ "Buy me a coffee" }</a></li>
                         </ul>
                     </div>
                     <div>

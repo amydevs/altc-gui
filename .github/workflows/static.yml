@@ -27,7 +27,6 @@ jobs:
     env:
       CARGO_INSTALLS: |
         trunk
-        wasm-bindgen-cli
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -47,18 +46,20 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: web-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: web-cargo-
       - name: Set up cargo install cache
         uses: actions/cache@v4
         with:
           path: installs
           key: |
-            web-cargo-installs
+            web-installs
             ${{ env.CARGO_INSTALLS }}
+          restore-keys: web-installs
       - name: Install cargo dependencies
         run: |
           while IFS= read -r package; do
             if [ "$package" != "" ]; then 
-              [ -d "installs/$package" ] || cargo install "$package" --target-dir "installs/$package"
+              cargo install "$package" --target-dir "installs/$package" || true
             fi;
           done <<< "$CARGO_INSTALLS"
       - name: Install wasm32-unknown-unknown Toolchain
