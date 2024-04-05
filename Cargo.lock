@@ -28,8 +28,8 @@ dependencies = [
 
 [[package]]
 name = "altc"
-version = "0.1.9"
-source = "git+https://github.com/amydevs/AbletonLiveThemeConverter.git?tag=0.1.9#4b994f4ec3b9a652fa16c3afd5c13360ded9c64a"
+version = "0.1.10"
+source = "git+https://github.com/amydevs/AbletonLiveThemeConverter.git?tag=0.1.10#b6436aadad769eb9fd8070ec108db2add58af938"
 dependencies = [
  "clap",
  "quick-xml",
