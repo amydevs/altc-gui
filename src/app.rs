@@ -21,33 +21,35 @@ pub fn app() -> Html {
         use_state(std::vec::Vec::new);
     let downloader_ref = use_node_ref();
 
-    let converted_ask_results = asks.iter().map(|fileinfo| {
-        let live_version = fileinfo.version;
-        let to_version = fileinfo.to_version.unwrap();
-        let cursor = Cursor::new(fileinfo.contents.as_bytes());
-        let mut reader = std::io::BufReader::new(cursor);
-        
-        let parsed = match util::parse_ask_from_reader(reader.borrow_mut(), live_version) {
-            Ok(parsed) => parsed,
-            Err(err) => {
-                let line_number = 1 + fileinfo.contents[..reader.stream_position().unwrap() as usize]
-                    .chars()
-                    .filter(|x| *x == '\n')
-                    .count();
-                return Err(DeErrorWrapper {
-                    name: fileinfo.name.clone(),
-                    cause: err,
-                    line_number: line_number,
-                })
-            },
-        };
-        let converted = util::convert(parsed, to_version);
-        let mut new_ask = fileinfo.clone();
-        new_ask.contents = util::generate_ask(&converted).unwrap();
-        new_ask.version = to_version;
-        new_ask.to_version = None;
-        Ok::<Ask, DeErrorWrapper>(new_ask)
-    }).collect::<Vec<_>>();
+    let converted_ask_results = use_memo(|_| {
+        asks.iter().map(|fileinfo| {
+            let live_version = fileinfo.version;
+            let to_version = fileinfo.to_version.unwrap();
+            let cursor = Cursor::new(fileinfo.contents.as_bytes());
+            let mut reader = std::io::BufReader::new(cursor);
+            
+            let parsed = match util::parse_ask_from_reader(reader.borrow_mut(), live_version) {
+                Ok(parsed) => parsed,
+                Err(err) => {
+                    let line_number = 1 + fileinfo.contents[..reader.stream_position().unwrap() as usize]
+                        .chars()
+                        .filter(|x| *x == '\n')
+                        .count();
+                    return Err(DeErrorWrapper {
+                        name: fileinfo.name.clone(),
+                        cause: err,
+                        line_number: line_number,
+                    })
+                },
+            };
+            let converted = util::convert(parsed, to_version);
+            let mut new_ask = fileinfo.clone();
+            new_ask.contents = util::generate_ask(&converted).unwrap();
+            new_ask.version = to_version;
+            new_ask.to_version = None;
+            Ok::<Ask, DeErrorWrapper>(new_ask)
+        }).collect::<Vec<_>>()
+    }, [asks.clone()]);
 
     let process_uploaded_files = {
         let asks = asks.clone();
@@ -203,19 +205,20 @@ pub fn app() -> Html {
                         <button
                             title="Download.ask files"
                             onclick={{
-                                let asks = asks.clone();
+                                let converted_ask_results = converted_ask_results.clone();
                                 Callback::from(move |_| {
-                                    let asks = asks.clone();
-                                    for ask in asks.iter() {
-                                        let contents_jsvalue = wasm_bindgen::JsValue::from_str(&ask.contents);
-                                        let contents_jsvalue_array = js_sys::Array::from_iter(std::iter::once(contents_jsvalue));
-                                        let blob = web_sys::Blob::new_with_str_sequence(&contents_jsvalue_array).unwrap();
-                                        let url = web_sys::Url::create_object_url_with_blob(&blob).unwrap();
-                                        let anchor = downloader_ref.cast::<HtmlAnchorElement>().unwrap();
-                                        anchor.set_download(&ask.name);
-                                        anchor.set_href(&url);
-                                        anchor.click();
-                                        web_sys::Url::revoke_object_url(&url).unwrap();
+                                    for ask_result in converted_ask_results.iter() {
+                                        if let Ok(ask) = ask_result {
+                                            let contents_jsvalue = wasm_bindgen::JsValue::from_str(&ask.contents);
+                                            let contents_jsvalue_array = js_sys::Array::from_iter(std::iter::once(contents_jsvalue));
+                                            let blob = web_sys::Blob::new_with_str_sequence(&contents_jsvalue_array).unwrap();
+                                            let url = web_sys::Url::create_object_url_with_blob(&blob).unwrap();
+                                            let anchor = downloader_ref.cast::<HtmlAnchorElement>().unwrap();
+                                            anchor.set_download(&ask.name);
+                                            anchor.set_href(&url);
+                                            anchor.click();
+                                            web_sys::Url::revoke_object_url(&url).unwrap();
+                                        }
                                     }
                                 })
                             }}
