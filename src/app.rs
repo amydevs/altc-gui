@@ -85,8 +85,8 @@ pub fn app() -> Html {
     };
 
     html! {
-        <main class="h-screen bg-background">
-            <div class="p-6 pb-0 flex min-h-[33.333%]">
+        <main class="min-h-screen bg-background flex flex-col p-6 gap-6">
+            <div class="pb-0 flex">
                 <div class="rounded-lg border bg-card text-card-foreground shadow-sm p-6 space-y-3 flex-1">
                     <div>
                         <h1 class="font-bold">
@@ -123,10 +123,13 @@ pub fn app() -> Html {
                             <LiveVersionSelectOptions />
                         </select>                 
                     </div>
+                    // <div>
+                    //     <h2 class="font-bold">{ "Version" }</h2>
+                    // </div>
                 </div>
             </div>
-            <div class="flex sm:flex-row flex-col p-6 gap-6 h-2/3">
-                <div class="flex flex-col rounded-lg border bg-card text-card-foreground shadow-sm flex-1">
+            <div class="flex sm:flex-row flex-col gap-6 flex-1">
+                <div class="flex flex-col rounded-lg border bg-card text-card-foreground shadow-sm flex-1 min-h-[320px]">
                     <div class="border-b p-6 flex justify-between">
                         { "Drag .ask files below here" }
                         <input
@@ -195,7 +198,7 @@ pub fn app() -> Html {
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-col rounded-lg border bg-card text-card-foreground shadow-sm flex-1">
+                <div class="flex flex-col rounded-lg border bg-card text-card-foreground shadow-sm flex-1 min-h-[320px]">
                     <div class="border-b p-6 flex justify-between">
                         { "Output .ask files" }
                         <a
