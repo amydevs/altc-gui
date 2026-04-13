@@ -104,13 +104,13 @@ pub fn file(props: &Props) -> Html {
                     </button>
                 </div>
             </div>
-            <div class="p-3">
+            <form class="p-3">
                 {
                     if let Some(to_version) = props.ask.to_version {
                         html! {
                             <>
                                 { "Convert from " }
-                                <select class="p-1 bg-background border" onchange={{
+                                <select name={ format!("{}-version", props.ask.name) } class="p-1 bg-background border" onchange={{
                                     let onedit = props.onedit.clone();
                                     let ask = props.ask.clone();
                                     Callback::from(move |event: Event| {
@@ -124,7 +124,7 @@ pub fn file(props: &Props) -> Html {
                                     <LiveVersionSelectOptions value={props.ask.version} />
                                 </select>
                                 { " to " }
-                                <select class="p-1 bg-background border" onchange={{
+                                <select name={ format!("{}-to-version", props.ask.name) } class="p-1 bg-background border" onchange={{
                                     let onedit = props.onedit.clone();
                                     let ask = props.ask.clone();
                                     Callback::from(move |event: Event| {
@@ -166,7 +166,7 @@ pub fn file(props: &Props) -> Html {
                         }}
                     />
                 </div>
-            </div>
+            </form>
         </div>
     }
 }
