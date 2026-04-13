@@ -123,9 +123,13 @@ pub fn app() -> Html {
                             <LiveVersionSelectOptions />
                         </select>                 
                     </div>
-                    // <div>
-                    //     <h2 class="font-bold">{ "Version" }</h2>
-                    // </div>
+                    <div>
+                        <h2 class="font-bold">{ "Version" }</h2>
+                        <ul class="list-disc pl-3">
+                            <li>{ "GUI Version: " }{ option_env!("GITHUB_SHA").unwrap_or(env!("CARGO_PKG_VERSION")) }</li>
+                            <li>{ "Library Version: " }{ altc::VERSION }</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class="flex sm:flex-row flex-col gap-6 flex-1">
