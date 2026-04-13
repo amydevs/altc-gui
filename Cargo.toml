@@ -11,8 +11,8 @@ categories = ["gui", "wasm", "web-programming"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-yew = { version="0.20", features=["csr"] }
-altc = { tag = "0.2.11", git = "https://github.com/amydevs/AbletonLiveThemeConverter.git" }
+yew = { version="0.23", features=["csr"] }
+altc = { tag = "0.2.12", git = "https://github.com/amydevs/AbletonLiveThemeConverter.git" }
 web-sys = { version = "0.3", features = ["DataTransfer", "HtmlSelectElement", "HtmlAnchorElement"] }
 gloo = "0.12"
 js-sys = "0.3"

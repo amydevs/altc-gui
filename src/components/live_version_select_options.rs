@@ -10,7 +10,7 @@ pub struct Props {
 
 
 
-#[function_component(LiveVersionSelectOptions)]
+#[component(LiveVersionSelectOptions)]
 pub fn live_version_select_options(props: &Props) -> Html {
     let versions: &[LiveVersion] = &[
         LiveVersion::Live10,

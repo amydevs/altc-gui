@@ -21,10 +21,11 @@ pub struct Props {
     pub ask: Ask,
     #[prop_or_default]
     pub onedit: Callback<Ask>,
+    #[prop_or_default]
     pub ondelete: Option<Callback<()>>,
 }
 
-#[function_component(AskCard)]
+#[component(AskCard)]
 pub fn file(props: &Props) -> Html {
     let active = use_state(|| false);
     let downloader_ref = use_node_ref();
